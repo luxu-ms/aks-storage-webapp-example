@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapplication3-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: webapplication3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapplication3-deployment
+  labels:
+    app: webapplication3-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapplication3
+  template:
+    metadata:
+      labels:
+        app: webapplication3
+    spec:
+      containers:
+      - name: webapplication3
+        image: acrtestdev02.azurecr.io/webapplication3:0.0.14
+        volumeMounts:
+        - mountPath: "/MyStaticFiles"
+          name: volume
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: pvc-blob
